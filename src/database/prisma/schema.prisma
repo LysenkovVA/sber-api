@@ -1,0 +1,13 @@
+// BinaryTargets
+// https://www.prisma.io/docs/orm/reference/prisma-schema-reference#binarytargets-options
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins", "prismaSchemaFolder"]
+  binaryTargets   = ["native", "linux-musl-arm64-openssl-3.0.x", "windows"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../database.db"
+}
