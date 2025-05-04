@@ -1,0 +1,17 @@
+model SberApiClient {
+  id           String  @id @default(cuid())
+  login        String
+  clientId     String
+  clientSecret String
+  scope        String
+  accessToken  String?
+  expiresIn    Int?
+  refreshToken String?
+  idToken      String?
+
+  // Служебные поля
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sber_api_clients")
+}

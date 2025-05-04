@@ -1,5 +1,8 @@
 import { Action, Reducer, ReducersMapObject } from "redux";
 import { InfiniteScrollSchema } from "@/app/UI/InfiniteScroll/model/types/InfiniteScrollSchema";
+import { SimpleListReduxSchema } from "@/app/lib/types/SimpleListReduxSchema";
+import { SberApiClientEntity } from "@/app/(public-routes)/(sber-api-clients)/model/types/SberApiClientEntity";
+import { DetailsReduxSchema } from "@/app/lib/types/MultipleDetailsReduxSchema";
 
 /**
  * Схема глобального состояния
@@ -8,6 +11,8 @@ export interface GlobalStateSchema {
     // Обязательные составляющие
     // Позиции скроллов для бесконечных страниц
     infiniteScrollSchema: InfiniteScrollSchema;
+    sberApiClientsSimpleListSchema?: SimpleListReduxSchema<SberApiClientEntity>;
+    sberApiClientDetailsSchema?: DetailsReduxSchema<SberApiClientEntity>;
 }
 
 /**

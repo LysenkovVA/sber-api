@@ -4,6 +4,7 @@ import { LabelWithIcon } from "@/app/UI/LabelWithIcon";
 import { FORM_ICON_SIZE } from "@/app/UI/AppLayout/config/consts";
 import { Form, Input, Skeleton } from "antd";
 import { memo } from "react";
+import imagePng from "../../../lib/assets/png/textField.png";
 
 export interface FormItemTextAreaProps {
     imageSrc?: string;
@@ -19,7 +20,7 @@ export interface FormItemTextAreaProps {
 
 export const FormItemTextArea = memo((props: FormItemTextAreaProps) => {
     const {
-        imageSrc = "",
+        imageSrc = imagePng.src,
         labelText,
         namePath,
         required = false,

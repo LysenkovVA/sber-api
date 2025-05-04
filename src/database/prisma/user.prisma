@@ -1,5 +1,5 @@
 model User {
   id String @id @default(cuid())
 
-  @@map("users")
+  @@map("sber-api-clients")
 }

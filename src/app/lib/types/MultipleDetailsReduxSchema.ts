@@ -7,7 +7,7 @@ export interface DetailsReduxSchema<EntityType> {
     _isInitialized: boolean;
 }
 
-export interface MultipleDetailsReduxSchema<EntityType> {
-    // Идентификатор формы, детальная информация
-    details: Record<string, DetailsReduxSchema<EntityType>>;
-}
+// export interface MultipleDetailsReduxSchema<EntityType> {
+//     // Идентификатор формы, детальная информация
+//     details: Record<string, DetailsReduxSchema<EntityType>>;
+// }
