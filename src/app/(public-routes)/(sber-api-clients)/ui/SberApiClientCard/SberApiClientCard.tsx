@@ -2,15 +2,16 @@
 
 import React, { CSSProperties, memo, useMemo } from "react";
 import { SberApiClientEntity } from "../../model/types/SberApiClientEntity";
-import { App, Card, Flex, Skeleton } from "antd";
+import { App, Card, Flex, Skeleton, Tag, Typography } from "antd";
 import { useRouter } from "next/navigation";
 import { deleteSberApiClientByIdThunk } from "../../model/thunks/deleteSberApiClientByIdThunk";
 import { useAppDispatch } from "@/app/lib/store";
 import { EditCardButton } from "@/app/UI/EditCardButton";
 import { DeleteCardButton } from "@/app/UI/DeleteCardButton";
-import { DeleteOutlined, GiftOutlined } from "@ant-design/icons";
+import { CheckSquareOutlined, DeleteOutlined } from "@ant-design/icons";
 import { HighlightedText } from "@/app/UI/HighlightedText/HighlightedText";
 import { AuthCardButton } from "@/app/UI/AuthCardButton/ui/AuthCardButton";
+import { PRIMARY_COLOR } from "@/app/lib/themes/primary-theme";
 
 export interface SberApiClientCardProps {
     style?: CSSProperties;
@@ -49,10 +50,26 @@ export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
             }}
             title={
                 !isLoading ? (
-                    <HighlightedText
-                        style={{ fontSize: 16, fontWeight: "bold" }}
-                        text={sberApiClient?.login ?? ""}
-                    />
+                    <Flex
+                        style={{ width: "100%" }}
+                        align={"center"}
+                        justify={"start"}
+                        gap={8}
+                    >
+                        <Typography.Text
+                            style={{ fontSize: 16, fontWeight: "bold" }}
+                            type={"secondary"}
+                        >
+                            {"Логин"}
+                        </Typography.Text>
+                        <HighlightedText
+                            style={{ fontSize: 16, fontWeight: "bold" }}
+                            text={sberApiClient?.login ?? ""}
+                        />
+                        {isAuth ? (
+                            <Tag color={PRIMARY_COLOR}>{"подключено"}</Tag>
+                        ) : null}
+                    </Flex>
                 ) : (
                     <Skeleton.Node style={{ width: 150, height: 20 }} active />
                 )
@@ -64,16 +81,21 @@ export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
                         key={"auth"}
                         isLoading={isLoading}
                         onClick={() => {
-                            // router.push(
-                            //     `${process.env.NEXT_PUBLIC_SBER_AUTH_CODE_BASE_URL}?scope=${sberApiClient?.scope}&response_type=[code]&client_id=${sberApiClient?.clientId}&redirect_uri=${"http://localhost:3000/sber-api-clients"}&state=one1two2three3four4five5six6seven7eight8nine9ten10`,
-                            // );
                             router.push(
-                                `${process.env.NEXT_PUBLIC_SBER_AUTH_CODE_BASE_URL}?scope=${sberApiClient?.scope}&response_type=code&client_id=${sberApiClient?.clientId}&redirect_uri=${"http://localhost:3000/sber-api-clients"}&state=${sberApiClient?.id}`,
+                                `${process.env.NEXT_PUBLIC_SBER_AUTH_CODE_BASE_URL}?scope=${sberApiClient?.scope}&response_type=code&client_id=${sberApiClient?.clientId}&redirect_uri=${process.env.NEXT_PUBLIC_PATH}/sber-api-clients&state=${sberApiClient?.id}`,
                             );
                         }}
                     />
                 ) : (
-                    <GiftOutlined key={"cool"} />
+                    <Flex align={"center"} justify={"center"} gap={8} vertical>
+                        <CheckSquareOutlined style={{ color: PRIMARY_COLOR }} />
+                        <Typography.Text
+                            style={{ fontSize: 10, color: PRIMARY_COLOR }}
+                            type={"secondary"}
+                        >
+                            {`ПОДКЛЮЧЕНО`}
+                        </Typography.Text>
+                    </Flex>
                 ),
                 <EditCardButton
                     key={"edit"}
@@ -115,26 +137,155 @@ export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
         >
             <Flex align={"start"} justify={"start"} gap={4} vertical>
                 {!isLoading ? (
-                    <HighlightedText
-                        style={{ fontSize: 16 }}
-                        text={sberApiClient?.clientId ?? ""}
-                    />
+                    <Flex
+                        style={{ width: "100%" }}
+                        align={"center"}
+                        justify={"start"}
+                        gap={4}
+                    >
+                        <Typography.Text
+                            style={{ fontSize: 16 }}
+                            type={"secondary"}
+                        >
+                            {"Client ID"}
+                        </Typography.Text>
+                        <HighlightedText
+                            style={{ fontSize: 16, fontWeight: "bold" }}
+                            text={sberApiClient?.clientId ?? ""}
+                        />
+                    </Flex>
                 ) : (
                     <Skeleton.Node style={{ width: 150, height: 20 }} active />
                 )}
                 {!isLoading ? (
-                    <HighlightedText
-                        style={{ fontSize: 16 }}
-                        text={sberApiClient?.clientSecret ?? ""}
-                    />
+                    <Flex
+                        style={{ width: "100%" }}
+                        align={"center"}
+                        justify={"start"}
+                        gap={4}
+                    >
+                        <Typography.Text
+                            style={{ fontSize: 16 }}
+                            type={"secondary"}
+                        >
+                            {"Client secret"}
+                        </Typography.Text>
+                        <HighlightedText
+                            style={{ fontSize: 16, fontWeight: "bold" }}
+                            text={sberApiClient?.clientSecret ?? ""}
+                        />
+                    </Flex>
                 ) : (
                     <Skeleton.Node style={{ width: 150, height: 20 }} active />
                 )}
                 {!isLoading ? (
-                    <HighlightedText
-                        style={{ fontSize: 16 }}
-                        text={sberApiClient?.scope ?? ""}
-                    />
+                    <Flex
+                        style={{ width: "100%" }}
+                        align={"start"}
+                        justify={"center"}
+                        vertical
+                        gap={4}
+                    >
+                        <Typography.Text
+                            style={{ fontSize: 16 }}
+                            type={"secondary"}
+                        >
+                            {"Scope"}
+                        </Typography.Text>
+                        <HighlightedText
+                            style={{ fontSize: 10, fontWeight: "bold" }}
+                            text={sberApiClient?.scope ?? ""}
+                            rowsCount={2}
+                        />
+                    </Flex>
+                ) : (
+                    <Skeleton.Node style={{ width: 150, height: 20 }} active />
+                )}
+                {!isLoading ? (
+                    <Flex
+                        style={{ width: "100%" }}
+                        align={"start"}
+                        justify={"center"}
+                        vertical
+                        gap={4}
+                    >
+                        <Typography.Text
+                            style={{ fontSize: 16 }}
+                            type={"secondary"}
+                        >
+                            {"Access token"}
+                        </Typography.Text>
+                        <HighlightedText
+                            style={{
+                                fontSize: 10,
+                                fontWeight: "bold",
+                                color:
+                                    sberApiClient?.accessToken === undefined
+                                        ? "black"
+                                        : PRIMARY_COLOR,
+                            }}
+                            text={sberApiClient?.accessToken ?? "отсутствует"}
+                        />
+                    </Flex>
+                ) : (
+                    <Skeleton.Node style={{ width: 150, height: 20 }} active />
+                )}
+                {!isLoading ? (
+                    <Flex
+                        style={{ width: "100%" }}
+                        align={"start"}
+                        justify={"center"}
+                        vertical
+                        gap={4}
+                    >
+                        <Typography.Text
+                            style={{ fontSize: 16 }}
+                            type={"secondary"}
+                        >
+                            {"Refresh token"}
+                        </Typography.Text>
+                        <HighlightedText
+                            style={{
+                                fontSize: 10,
+                                fontWeight: "bold",
+                                color:
+                                    sberApiClient?.refreshToken === undefined
+                                        ? "black"
+                                        : PRIMARY_COLOR,
+                            }}
+                            text={sberApiClient?.refreshToken ?? "отсутствует"}
+                        />
+                    </Flex>
+                ) : (
+                    <Skeleton.Node style={{ width: 150, height: 20 }} active />
+                )}
+                {!isLoading ? (
+                    <Flex
+                        style={{ width: "100%" }}
+                        align={"start"}
+                        justify={"center"}
+                        vertical
+                        gap={4}
+                    >
+                        <Typography.Text
+                            style={{ fontSize: 16 }}
+                            type={"secondary"}
+                        >
+                            {"ID token"}
+                        </Typography.Text>
+                        <HighlightedText
+                            style={{
+                                fontSize: 10,
+                                fontWeight: "bold",
+                                color:
+                                    sberApiClient?.idToken === undefined
+                                        ? "black"
+                                        : PRIMARY_COLOR,
+                            }}
+                            text={sberApiClient?.idToken ?? "отсутствует"}
+                            rowsCount={2}
+                        />
+                    </Flex>
                 ) : (
                     <Skeleton.Node style={{ width: 150, height: 20 }} active />
                 )}

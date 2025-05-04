@@ -3,8 +3,8 @@ import { HEADER_HEIGHT } from "@/app/UI/AppLayout/config/consts";
 
 export const PRIMARY_COLOR = "#43ae3b";
 export const PRIMARY_VARIANT_COLOR = "#538fec";
-export const SECONDARY_COLOR = "#a7b0df";
-export const SECONDARY_VARIANT_COLOR = "#BDDDE4";
+export const SECONDARY_COLOR = "#a9d5a4";
+export const SECONDARY_VARIANT_COLOR = "#50c645";
 export const BACKGROUND_COLOR = "#f9f9fb";
 export const SURFACE_COLOR = "#FFFFFF";
 export const ERROR_COLOR = "#B00020";

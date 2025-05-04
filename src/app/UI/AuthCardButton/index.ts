@@ -1,3 +1,3 @@
-import { EditCardButton } from "./ui/AuthCardButton";
+import { AuthCardButton } from "./ui/AuthCardButton";
 
-export { EditCardButton };
+export { AuthCardButton };

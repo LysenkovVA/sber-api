@@ -36,6 +36,8 @@ export const SberApiClientsCardList = memo(
         const searchParams = useSearchParams();
         const code = searchParams.get("code");
         const id = searchParams.get("state");
+        const errorParam = searchParams.get("error");
+        const errorDescriptionParam = searchParams.get("error_description");
 
         const dispatch = useAppDispatch();
         const isLoading = useAppSelector(getSberApiClientsSimpleListIsLoading);
@@ -51,7 +53,7 @@ export const SberApiClientsCardList = memo(
 
         useEffect(() => {
             if (code && id) {
-                // TODO получение токенов для записи
+                // alert(`Code: ${code}; ID: ${id}`);
                 dispatch(
                     updateSberApiClientTokensThunk({
                         entityId: id,
@@ -65,6 +67,15 @@ export const SberApiClientsCardList = memo(
                 });
             }
         }, [code, dispatch, id, notificationApi, router]);
+
+        useEffect(() => {
+            if (errorParam || errorDescriptionParam) {
+                notificationApi.error({
+                    message: errorParam,
+                    description: errorDescriptionParam,
+                });
+            }
+        }, [errorDescriptionParam, errorParam, notificationApi]);
 
         useInitialEffect(() => {
             if (!isInitialized) {

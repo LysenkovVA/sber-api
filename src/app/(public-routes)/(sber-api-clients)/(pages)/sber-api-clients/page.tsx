@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { SberApiClientsCardList } from "@/app/(public-routes)/(sber-api-clients)/ui/SberApiClientsCardList/SberApiClientsCardList";
 
 export const metadata: Metadata = {
-    title: "FancyFaces",
+    title: "SBER API",
 };
 
 export default async function SberApiClientsPage() {
