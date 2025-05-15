@@ -10,14 +10,12 @@ import { SberTokenGrantType } from "@/app/lib/sber/types/SberTokenGrantType";
 
 export async function POST(
     request: NextRequest,
-    props: { params: Promise<{ id: string; code: string }> },
+    props: { params: Promise<{ id: string }> },
 ) {
-    const { id, code } = await props.params;
+    const { id } = await props.params;
 
-    if (!id || !code) {
-        return ResponseData.Error([
-            "ID или код не определен!",
-        ]).toNextResponse();
+    if (!id) {
+        return ResponseData.Error(["ID не определен!"]).toNextResponse();
     }
 
     const client = await getSberApiClientById(id);
@@ -38,12 +36,13 @@ export async function POST(
         const url = `https://iftfintech.testsbi.sberbank.ru:9443/ic/sso/api/v2/oauth/token`;
 
         const response = await getTokens(
-            SberTokenGrantType.authorizationCode,
+            SberTokenGrantType.refreshToken,
             client.data.clientId!,
             client.data.clientSecret!,
             redirectUrl,
             url,
-            code,
+            undefined,
+            client.data.refreshToken!,
         );
 
         // Если токены не получены, значит произошла ошибка

@@ -20,7 +20,7 @@ export const Footer = memo(() => {
             justify={"center"}
         >
             <Typography.Text style={{ color: ON_PRIMARY_COLOR }}>
-                {`SBER API © Лысенков Виктор (${new Date(Date.now()).getFullYear()})`}
+                {`Лысенков Виктор © ${new Date(Date.now()).getFullYear()}`}
             </Typography.Text>
         </Flex>
     );

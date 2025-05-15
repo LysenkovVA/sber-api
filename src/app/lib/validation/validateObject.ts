@@ -2,7 +2,8 @@ import { z, ZodError } from "zod";
 
 export async function validateObject<S extends z.ZodType<z.infer<S>, any>>(
     schema: S,
-    data: z.infer<S>,
+    // data: z.infer<S>,
+    data: any,
 ): Promise<z.infer<S>> {
     const result = schema.safeParse(data);
 

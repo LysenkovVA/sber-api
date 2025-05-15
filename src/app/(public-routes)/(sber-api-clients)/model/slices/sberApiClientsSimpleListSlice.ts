@@ -4,6 +4,9 @@ import { SimpleListReduxSchema } from "@/app/lib/types/SimpleListReduxSchema";
 import { SberApiClientEntity } from "../types/SberApiClientEntity";
 import { sberApiClientAdapter } from "../adapter/sberApiClientAdapter";
 import { updateSberApiClientTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/updateSberApiClientTokensThunk";
+import { clearTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/clearTokensThunk";
+import { refreshSberApiClientTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/refreshSberApiClientTokensThunk";
+import { createRublePaymentThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/createRublePaymentThunk";
 
 const initialState: SimpleListReduxSchema<SberApiClientEntity> = {
     ids: [],
@@ -84,7 +87,41 @@ export const sberApiClientsSimpleListSlice = createSlice({
                     state.isLoading = false;
                     state.error = action.payload;
                 },
-            );
+            )
+            .addCase(
+                refreshSberApiClientTokensThunk.fulfilled,
+                (state, action) => {
+                    state.error = undefined;
+
+                    sberApiClientAdapter.upsertOne(state, action.payload.data!);
+                },
+            )
+            .addCase(
+                refreshSberApiClientTokensThunk.rejected,
+                (state, action) => {
+                    state.isLoading = false;
+                    state.error = action.payload;
+                },
+            )
+            .addCase(clearTokensThunk.fulfilled, (state, action) => {
+                state.isLoading = false;
+                Object.values(state.entities).map((client) => {
+                    if (client.id === action.payload.data?.id) {
+                        sberApiClientAdapter.upsertOne(
+                            state,
+                            action.payload.data,
+                        );
+                    }
+                });
+            })
+            .addCase(clearTokensThunk.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+            .addCase(createRublePaymentThunk.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            });
     },
 });
 

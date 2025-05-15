@@ -44,6 +44,27 @@ export class ResponseData<T> {
         return new ResponseData<T>(true, 200, data, pagination, statusText);
     }
 
+    // 201
+    static Ok_201<T>(
+        data: T,
+        pagination?: ResponsePagination,
+        statusText?: string,
+    ) {
+        return new ResponseData<T>(true, 201, data, pagination, statusText);
+    }
+
+    // 202
+    static Ok_202<T>(errors: string[] = ["202"]) {
+        return new ResponseData<undefined>(
+            false,
+            202,
+            undefined,
+            undefined,
+            errors[0],
+            errors,
+        );
+    }
+
     // 400
     static BadRequest(errors: string[] = ["400"]) {
         return new ResponseData<undefined>(
@@ -68,7 +89,7 @@ export class ResponseData<T> {
         );
     }
 
-    // 401
+    // 403
     static Forbidden(errors: string[] = ["403"]) {
         return new ResponseData<undefined>(
             false,
@@ -92,11 +113,36 @@ export class ResponseData<T> {
         );
     }
 
+    // 406
+    static NotAcceptable(errors: string[] = ["406"]) {
+        return new ResponseData<undefined>(
+            false,
+            406,
+            undefined,
+            undefined,
+            errors[0],
+            errors,
+        );
+    }
+
+    // 429
+    static TooManyRequests(errors: string[] = ["429"]) {
+        return new ResponseData<undefined>(
+            false,
+            429,
+            undefined,
+            undefined,
+            errors[0],
+            errors,
+        );
+    }
+
     // 500
     static Error(
         errorInstance: unknown,
         pagination?: ResponsePagination,
         statusText?: string,
+        statusCode: number = 500,
     ) {
         // Ошибки Zod
         if (errorInstance instanceof ZodError) {
@@ -106,7 +152,7 @@ export class ResponseData<T> {
 
             return new ResponseData<undefined>(
                 false,
-                500,
+                statusCode,
                 undefined,
                 pagination,
                 statusText,
@@ -118,7 +164,7 @@ export class ResponseData<T> {
         if (errorInstance instanceof Error) {
             return new ResponseData<undefined>(
                 false,
-                500,
+                statusCode,
                 undefined,
                 pagination,
                 statusText,
@@ -129,12 +175,20 @@ export class ResponseData<T> {
         // Все остальные ошибки
         return new ResponseData<undefined>(
             false,
-            500,
+            statusCode,
             undefined,
             pagination,
             statusText,
             [JSON.stringify(errorInstance, null, 2)],
         );
+    }
+
+    static Error_503(
+        errorInstance: unknown,
+        pagination?: ResponsePagination,
+        statusText?: string,
+    ) {
+        return this.Error(errorInstance, pagination, statusText, 503);
     }
 
     static getAllErrors(data: ResponseData<any>): string {

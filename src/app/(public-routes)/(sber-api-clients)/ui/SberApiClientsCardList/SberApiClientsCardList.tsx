@@ -92,6 +92,8 @@ export const SberApiClientsCardList = memo(
                 notificationApi.error({
                     message: "Ошибка",
                     description: error,
+                    placement: "top",
+                    duration: 10000,
                 });
             }
         }, [error, notificationApi]);

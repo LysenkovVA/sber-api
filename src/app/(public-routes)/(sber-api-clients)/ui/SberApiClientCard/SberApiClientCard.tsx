@@ -8,10 +8,22 @@ import { deleteSberApiClientByIdThunk } from "../../model/thunks/deleteSberApiCl
 import { useAppDispatch } from "@/app/lib/store";
 import { EditCardButton } from "@/app/UI/EditCardButton";
 import { DeleteCardButton } from "@/app/UI/DeleteCardButton";
-import { CheckSquareOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+    ClearOutlined,
+    CoffeeOutlined,
+    DeleteOutlined,
+} from "@ant-design/icons";
 import { HighlightedText } from "@/app/UI/HighlightedText/HighlightedText";
 import { AuthCardButton } from "@/app/UI/AuthCardButton/ui/AuthCardButton";
-import { PRIMARY_COLOR } from "@/app/lib/themes/primary-theme";
+import { ERROR_COLOR, PRIMARY_COLOR } from "@/app/lib/themes/primary-theme";
+import dayjs from "dayjs";
+import { ClearTokensButton } from "@/app/(public-routes)/(sber-api-clients)/ui/SberApiClientCard/ClearTokensButton";
+import { clearTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/clearTokensThunk";
+import { DateTimeHelper } from "@/app/lib/utils/dateTimeHelper";
+import { RefreshTokensButton } from "@/app/(public-routes)/(sber-api-clients)/ui/SberApiClientCard/RefreshTokensButton";
+import { refreshSberApiClientTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/refreshSberApiClientTokensThunk";
+import { CreateRublePaymentButton } from "@/app/(public-routes)/(sber-api-clients)/ui/SberApiClientCard/CreateRublePaymentButton";
+import { createRublePaymentThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/createRublePaymentThunk";
 
 export interface SberApiClientCardProps {
     style?: CSSProperties;
@@ -86,24 +98,110 @@ export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
                             );
                         }}
                     />
-                ) : (
-                    <Flex align={"center"} justify={"center"} gap={8} vertical>
-                        <CheckSquareOutlined style={{ color: PRIMARY_COLOR }} />
-                        <Typography.Text
-                            style={{ fontSize: 10, color: PRIMARY_COLOR }}
-                            type={"secondary"}
-                        >
-                            {`ПОДКЛЮЧЕНО`}
-                        </Typography.Text>
-                    </Flex>
-                ),
+                ) : undefined,
+                // ) : (
+                //     <Flex
+                //         align={"center"}
+                //         justify={"center"}
+                //         gap={8}
+                //         vertical
+                //         onClick={() => {
+                //             if (sberApiClient?.id) {
+                //                 router.push(
+                //                     `/sber-api-clients/${sberApiClient?.id}`,
+                //                 );
+                //             }
+                //         }}
+                //     >
+                //         <CheckSquareOutlined style={{ color: PRIMARY_COLOR }} />
+                //         <Typography.Text
+                //             style={{ fontSize: 10, color: PRIMARY_COLOR }}
+                //             type={"secondary"}
+                //         >
+                //             {`Выбрать`}
+                //         </Typography.Text>
+                //     </Flex>
+                // ),
+                <ClearTokensButton
+                    key={"clearTokens"}
+                    isLoading={isLoading}
+                    onClick={() => {
+                        if (sberApiClient?.id) {
+                            confirm({
+                                title: "Очистка токенов",
+                                icon: (
+                                    <ClearOutlined style={{ color: "blue" }} />
+                                ),
+                                content: `Очистить токены?`,
+                                okText: "Да",
+                                okType: "danger",
+                                cancelText: "Нет",
+                                onOk() {
+                                    dispatch(
+                                        clearTokensThunk({
+                                            id: sberApiClient.id,
+                                        }),
+                                    );
+                                },
+                            });
+                        }
+                    }}
+                />,
+                <RefreshTokensButton
+                    key={"refreshTokens"}
+                    isLoading={isLoading}
+                    onClick={() => {
+                        if (sberApiClient?.id) {
+                            confirm({
+                                title: "Обновление токенов",
+                                icon: (
+                                    <CoffeeOutlined style={{ color: "blue" }} />
+                                ),
+                                content: `Обновить токены доступа?`,
+                                okText: "Да",
+                                okType: "danger",
+                                cancelText: "Нет",
+                                onOk() {
+                                    dispatch(
+                                        refreshSberApiClientTokensThunk({
+                                            entityId: sberApiClient.id,
+                                        }),
+                                    );
+                                },
+                            });
+                        }
+                    }}
+                />,
+                <CreateRublePaymentButton
+                    key={"createRublePayment"}
+                    isLoading={isLoading}
+                    onClick={async () => {
+                        if (sberApiClient?.id) {
+                            try {
+                                const result = await dispatch(
+                                    createRublePaymentThunk({
+                                        entityId: sberApiClient.id,
+                                    }),
+                                ).unwrap();
+
+                                if (result.isOk) {
+                                    alert("Платеж выполнен!");
+                                } else {
+                                    alert(result.getAllErrors());
+                                }
+                            } catch (error) {
+                                // alert("Ошибка при выполнении запроса!");
+                            }
+                        }
+                    }}
+                />,
                 <EditCardButton
                     key={"edit"}
                     isLoading={isLoading}
                     onClick={() => {
                         if (sberApiClient?.id) {
                             router.push(
-                                `/sber-api-clients/${sberApiClient?.id}`,
+                                `/sber-api-clients/${sberApiClient?.id}/edit`,
                             );
                         }
                     }}
@@ -209,20 +307,52 @@ export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
                         vertical
                         gap={4}
                     >
-                        <Typography.Text
-                            style={{ fontSize: 16 }}
-                            type={"secondary"}
-                        >
-                            {"Access token"}
-                        </Typography.Text>
+                        <Flex align={"center"} justify={"center"} gap={8}>
+                            <Typography.Text
+                                style={{ fontSize: 16 }}
+                                type={"secondary"}
+                            >
+                                {"Access token"}
+                            </Typography.Text>
+                            {sberApiClient?.accessTokenExpireDate ? (
+                                <Tag
+                                    color={
+                                        dayjs(DateTimeHelper.Now()).isBefore(
+                                            dayjs(
+                                                sberApiClient?.accessTokenExpireDate,
+                                            ).format(),
+                                        )
+                                            ? "green"
+                                            : "red"
+                                    }
+                                >
+                                    {dayjs(DateTimeHelper.Now()).isBefore(
+                                        dayjs(
+                                            sberApiClient?.accessTokenExpireDate,
+                                        ).format(),
+                                    )
+                                        ? `Действует до ${dayjs(
+                                              sberApiClient?.accessTokenExpireDate,
+                                          ).format("DD.MM.YYYY HH:mm:ss")}`
+                                        : `Истек ${dayjs(
+                                              sberApiClient?.accessTokenExpireDate,
+                                          ).format()}`}
+                                </Tag>
+                            ) : null}
+                        </Flex>
                         <HighlightedText
                             style={{
                                 fontSize: 10,
                                 fontWeight: "bold",
-                                color:
-                                    sberApiClient?.accessToken === undefined
-                                        ? "black"
-                                        : PRIMARY_COLOR,
+                                color: !sberApiClient?.accessToken
+                                    ? ERROR_COLOR
+                                    : dayjs(DateTimeHelper.Now()).isBefore(
+                                            dayjs(
+                                                sberApiClient?.accessTokenExpireDate,
+                                            ).format(),
+                                        )
+                                      ? PRIMARY_COLOR
+                                      : ERROR_COLOR,
                             }}
                             text={sberApiClient?.accessToken ?? "отсутствует"}
                         />
@@ -238,20 +368,52 @@ export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
                         vertical
                         gap={4}
                     >
-                        <Typography.Text
-                            style={{ fontSize: 16 }}
-                            type={"secondary"}
-                        >
-                            {"Refresh token"}
-                        </Typography.Text>
+                        <Flex align={"center"} justify={"center"} gap={8}>
+                            <Typography.Text
+                                style={{ fontSize: 16 }}
+                                type={"secondary"}
+                            >
+                                {"Refresh token"}
+                            </Typography.Text>
+                            {sberApiClient?.refreshTokenExpireDate ? (
+                                <Tag
+                                    color={
+                                        dayjs(DateTimeHelper.Now()).isBefore(
+                                            dayjs(
+                                                sberApiClient?.refreshTokenExpireDate,
+                                            ).format(),
+                                        )
+                                            ? "green"
+                                            : "red"
+                                    }
+                                >
+                                    {dayjs(DateTimeHelper.Now()).isBefore(
+                                        dayjs(
+                                            sberApiClient?.refreshTokenExpireDate,
+                                        ).format(),
+                                    )
+                                        ? `Действует до ${dayjs(
+                                              sberApiClient?.refreshTokenExpireDate,
+                                          ).format("DD.MM.YYYY HH:mm:ss")}`
+                                        : `Истек ${dayjs(
+                                              sberApiClient?.refreshTokenExpireDate,
+                                          ).format()}`}
+                                </Tag>
+                            ) : null}
+                        </Flex>
                         <HighlightedText
                             style={{
                                 fontSize: 10,
                                 fontWeight: "bold",
-                                color:
-                                    sberApiClient?.refreshToken === undefined
-                                        ? "black"
-                                        : PRIMARY_COLOR,
+                                color: !sberApiClient?.refreshToken
+                                    ? ERROR_COLOR
+                                    : dayjs(DateTimeHelper.Now()).isBefore(
+                                            dayjs(
+                                                sberApiClient?.refreshTokenExpireDate,
+                                            ).format(),
+                                        )
+                                      ? PRIMARY_COLOR
+                                      : ERROR_COLOR,
                             }}
                             text={sberApiClient?.refreshToken ?? "отсутствует"}
                         />
@@ -277,10 +439,9 @@ export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
                             style={{
                                 fontSize: 10,
                                 fontWeight: "bold",
-                                color:
-                                    sberApiClient?.idToken === undefined
-                                        ? "black"
-                                        : PRIMARY_COLOR,
+                                color: !sberApiClient?.idToken
+                                    ? ERROR_COLOR
+                                    : PRIMARY_COLOR,
                             }}
                             text={sberApiClient?.idToken ?? "отсутствует"}
                             rowsCount={2}

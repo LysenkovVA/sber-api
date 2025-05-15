@@ -1,13 +1,15 @@
 model SberApiClient {
-  id           String  @id @default(cuid())
-  login        String
-  clientId     String
-  clientSecret String
-  scope        String
-  accessToken  String?
-  expiresIn    Int?
-  refreshToken String?
-  idToken      String?
+  id                     String    @id @default(cuid())
+  login                  String
+  clientId               String
+  clientSecret           String
+  scope                  String
+  accessToken            String?
+  accessTokenExpireDate  DateTime?
+  expiresIn              Int?
+  refreshToken           String?
+  refreshTokenExpireDate DateTime?
+  idToken                String?
 
   // Служебные поля
   createdAt DateTime @default(now())

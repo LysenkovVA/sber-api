@@ -174,6 +174,7 @@ export const SberApiClientForm = memo((props: SberApiClientFormProps) => {
                         requiredMessage={"Укажите scope"}
                         placeholder={"Укажите scope"}
                         isLoading={isFetching}
+                        rowsCount={6}
                     />
                 </Form>
             </Spin>

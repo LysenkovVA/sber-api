@@ -44,7 +44,7 @@ export const Header = memo((props: HeaderProps) => {
                     router.push("/");
                 }}
             >
-                {"СБЕР API"}
+                {"Тестирование СБЕР API"}
             </Typography.Text>
         </Flex>
     );

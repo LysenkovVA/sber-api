@@ -28,6 +28,8 @@ export async function POST(
             entityToSave,
         );
 
+        // const validatedData = SberApiClientEntitySchema.parse(entityToSave)
+
         const upsertedData = await prisma.sberApiClient.upsert({
             create: {
                 ...validatedData,
