@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export const RublePaymentSchema = z.object({
+export const RublePaymentEntitySchema = z.object({
+    // Поля SBER API
     // Номер документа
     number: z.string().optional(),
     // Дата составления документа
@@ -171,6 +172,15 @@ export const RublePaymentSchema = z.object({
     // Номер кредитного договора
     // Возможные значения: <= 50 characters
     creditContractNumber: z.string().max(50).optional(),
+
+    // Служебные поля ORM Prisma
+    createdAt: z.coerce.date().optional(),
+    updatedAt: z.coerce.date().optional(),
 });
 
-export type RublePaymentEntity = z.infer<typeof RublePaymentSchema>;
+export type RublePaymentEntity = Omit<
+    z.infer<typeof RublePaymentEntitySchema>,
+    "id"
+> & {
+    id: string; // Идентификатор необходим для схем redux
+};

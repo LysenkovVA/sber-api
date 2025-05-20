@@ -8,6 +8,7 @@ export interface HighlightedTextProps {
     text?: string;
     search?: string;
     rowsCount?: number;
+    disabled?: boolean;
 }
 
 // Function to highlight text
@@ -40,7 +41,13 @@ const highlightText = (text: string, highlight: string) => {
 };
 
 export const HighlightedText = memo((props: HighlightedTextProps) => {
-    const { style, text, search, rowsCount = undefined } = props;
+    const {
+        style,
+        text,
+        search,
+        rowsCount = undefined,
+        disabled = false,
+    } = props;
 
     if (
         text === undefined ||
@@ -51,6 +58,7 @@ export const HighlightedText = memo((props: HighlightedTextProps) => {
     ) {
         return (
             <Typography.Paragraph
+                disabled={disabled}
                 style={{
                     // display: "flex",
                     // alignItems: "center",

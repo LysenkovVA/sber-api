@@ -2,8 +2,8 @@
 
 import {
     RublePaymentEntity,
-    RublePaymentSchema,
-} from "@/app/lib/sber/types/RublePaymentSchema";
+    RublePaymentEntitySchema,
+} from "@/app/(public-routes)/(payments)/model/types/RublePaymentEntity";
 import { validateObject } from "@/app/lib/validation/validateObject";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
 import fetch from "node-fetch";
@@ -30,7 +30,7 @@ export async function createRublePayment(
     try {
         // Валидация
         const validatedData = await validateObject(
-            RublePaymentSchema,
+            RublePaymentEntitySchema,
             paymentData,
         );
 
@@ -42,7 +42,7 @@ export async function createRublePayment(
                 Authorization: `Bearer ${accessToken}`,
                 "Content-Type": "application/json",
                 Accept: "application/json",
-                // cache: "no-cache",
+                cache: "no-cache",
             },
             body: JSON.stringify(validatedData),
         });
@@ -53,7 +53,10 @@ export async function createRublePayment(
                 case 400:
                     responseData =
                         (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
-
+                    console.error(
+                        `Create payment error ${response.status}: `,
+                        JSON.stringify(responseData, null, 2),
+                    );
                     return ResponseData.BadRequest([
                         `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode}`,
                     ]);
@@ -61,6 +64,10 @@ export async function createRublePayment(
                 case 401:
                     responseData =
                         (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                    console.error(
+                        `Create payment error ${response.status}: `,
+                        JSON.stringify(responseData, null, 2),
+                    );
                     return ResponseData.NotAuthorized([
                         `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode}`,
                     ]);
@@ -68,6 +75,10 @@ export async function createRublePayment(
                 case 403:
                     responseData =
                         (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                    console.error(
+                        `Create payment error ${response.status}: `,
+                        JSON.stringify(responseData, null, 2),
+                    );
                     return ResponseData.Forbidden([
                         `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode}`,
                     ]);
@@ -75,6 +86,10 @@ export async function createRublePayment(
                 case 404:
                     responseData =
                         (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                    console.error(
+                        `Create payment error ${response.status}: `,
+                        JSON.stringify(responseData, null, 2),
+                    );
                     return ResponseData.NotFound([
                         `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode}`,
                     ]);
@@ -82,6 +97,10 @@ export async function createRublePayment(
                 case 429:
                     responseData =
                         (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                    console.error(
+                        `Create payment error ${response.status}: `,
+                        JSON.stringify(responseData, null, 2),
+                    );
                     return ResponseData.TooManyRequests([
                         `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode}`,
                     ]);
@@ -89,13 +108,21 @@ export async function createRublePayment(
                 case 500:
                     responseData =
                         (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                    console.error(
+                        `Create payment error ${response.status}: `,
+                        JSON.stringify(responseData, null, 2),
+                    );
                     return ResponseData.Error([
-                        `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode}`,
+                        `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode} JSON=${JSON.stringify(responseData.checks)}`,
                     ]);
 
                 case 503:
                     responseData =
                         (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                    console.error(
+                        `Create payment error ${response.status}: `,
+                        JSON.stringify(responseData, null, 2),
+                    );
                     return ResponseData.Error_503([
                         `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode}`,
                     ]);
@@ -109,6 +136,10 @@ export async function createRublePayment(
             if (response.status === 202) {
                 const responseData =
                     (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                console.error(
+                    `Create payment error ${response.status}: `,
+                    JSON.stringify(responseData, null, 2),
+                );
                 return ResponseData.Ok_202([
                     `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode}`,
                 ]);

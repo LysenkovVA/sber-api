@@ -3,13 +3,11 @@
 import fetch from "node-fetch";
 import { getSberAgent } from "@/app/lib/sber/sberAgent";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
-import { SberTokenResponseAccept } from "@/app/lib/sber/types/SberTokenResponseAccept";
-import { SberTokenGrantType } from "@/app/lib/sber/types/SberTokenGrantType";
 
 /**
  * Ответ сервера (200) при получении токенов
  */
-interface SBER_TOKENS_RESPONSE {
+export interface SBER_TOKENS_RESPONSE {
     access_token: string; // Авторизационный токен доступа
     token_type: string; // Всегда возвращается Bearer
     expires_in: number; // Срок жизни токена в секундах. Срок жизни access_token составляет 60 минут.
@@ -60,8 +58,13 @@ interface SBER_TOKENS_INTERNAL_SERVER_ERROR_RESPONSE {
     message: string;
 }
 
+// export enum SberTokenGrantType {
+//     authorizationCode = "authorization_code",
+//     refreshToken = "refresh_token",
+// }
+
 /**
- * Функция получения токенов доступа
+ * Функция получения токенов доступа по коду авторизации либо refresh-токену
  * https://developers.sber.ru/docs/ru/sber-api/specifications/oauth-token-post
  *
  * @param sberTokenGrantType Получение токенов по коду или обновление токенов
@@ -70,21 +73,26 @@ interface SBER_TOKENS_INTERNAL_SERVER_ERROR_RESPONSE {
  * @param refreshToken Токен обновления, полученный при последнем получении токенов доступа
  * @param clientSecret Секрет клиента
  * @param redirectUrl Адрес перенаправления запроса
- * @param standURL Адрес стенда
- * @param codeVerifier
+ * @param codeVerifier // TODO Разобраться зачем это надо
  *
  */
 export async function getTokens(
-    sberTokenGrantType: SberTokenGrantType,
+    sberTokenGrantType: string,
     clientId: string,
     clientSecret: string,
     redirectUrl: string,
-    standURL: string,
     code?: string,
     refreshToken?: string,
     codeVerifier?: string,
 ): Promise<ResponseData<SBER_TOKENS_RESPONSE | undefined>> {
     try {
+        /**
+         * Формируем запрос, согласно документации
+         * https://developers.sber.ru/docs/ru/sber-api/specifications/oauth-token-post
+         */
+        // Адрес стенда
+        const standURL = `https://iftfintech.testsbi.sberbank.ru:9443/ic/sso/api/v2/oauth/token`;
+
         // Параметры для "Content-Type": "application/x-www-form-urlencoded"
         const formData = new URLSearchParams();
         formData.append("grant_type", sberTokenGrantType);
@@ -106,7 +114,7 @@ export async function getTokens(
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
-                Accept: SberTokenResponseAccept.applicationJson,
+                Accept: "application/json",
                 cache: "no-cache",
             },
             body: formData,

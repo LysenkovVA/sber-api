@@ -18,17 +18,6 @@ export const SberApiClientEntitySchema = z.object({
     updatedAt: z.coerce.date().optional(),
 });
 
-export type SberApiClientEntity = Omit<
-    z.infer<typeof SberApiClientEntitySchema>,
-    "id"
-    // | "accessTokenExpireDate"
-    // | "refreshTokenExpireDate"
-    // | "createdAt"
-    // | "updatedAt"
-> & {
-    id: string; // Идентификатор необходим для схем redux
-    // accessTokenExpireDate?: Date | null;
-    // refreshTokenExpireDate?: Date | null;
-    // createdAt?: Date | null;
-    // updatedAt?: Date | null;
+export type SberApiClientEntity = z.infer<typeof SberApiClientEntitySchema> & {
+    id: string;
 };

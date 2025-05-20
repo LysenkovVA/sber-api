@@ -1,0 +1,51 @@
+model Payment {
+  id String @id @default(cuid())
+
+  number                          String?
+  date                            DateTime
+  // digestSignatures                Json?
+  bankStatus                      String?
+  bankComment                     String?
+  externalId                      String?
+  amount                          Int      @default(0)
+  operationCode                   String
+  deliveryKind                    String
+  priority                        String
+  urgencyCode                     String?
+  voCode                          String?
+  purpose                         String
+  departmentalInfoUip             String?
+  departmentalInfoDrawerStatus101 String?
+  departmentalInfoKbk             String?
+  departmentalInfoOktmo           String?
+  departmentalInfoReasonCode106   String?
+  departmentalInfoTaxPeriod107    String?
+  departmentalInfoDocNumber108    String?
+  departmentalInfoDocDate109      String?
+  departmentalInfoPaymentKind110  String?
+  payerName                       String
+  payerInn                        String
+  payerKpp                        String?
+  payerAccount                    String
+  payerBankBic                    String
+  payerBankCorrAccount            String
+  payeeName                       String
+  payeeInn                        String?
+  payeeKpp                        String?
+  payeeAccount                    String?
+  payeeBankBic                    String
+  payeeBankCorrAccount            String?
+  crucialFieldsHash               String?
+  vatType                         String
+  vatRate                         String?
+  vatAmount                       Int?
+  incomeTypeCode                  String?
+  isPaidByCredit                  Boolean?
+  creditContractNumber            String?
+
+  // Служебные поля
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("payments")
+}

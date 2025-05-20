@@ -18,7 +18,7 @@ const nextConfig = {
                     // { key: "Access-Control-Allow-Origin", value: "*" }, // replace this your actual origin
                     {
                         key: "Access-Control-Allow-Origin",
-                        value: process.env.NEXT_PUBLIC_PATH,
+                        value: `${process.env.NEXT_PUBLIC_PATH}`,
                     },
                     {
                         key: "Access-Control-Allow-Methods",

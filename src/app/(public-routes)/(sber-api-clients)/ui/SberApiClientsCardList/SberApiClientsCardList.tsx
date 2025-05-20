@@ -22,7 +22,9 @@ import {
 import { getSberApiClientsSimpleListThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/getSberApiClientsSimpleListThunk";
 import { sberApiClientsSimpleListReducer } from "@/app/(public-routes)/(sber-api-clients)/model/slices/sberApiClientsSimpleListSlice";
 import { SberApiClientCard } from "@/app/(public-routes)/(sber-api-clients)/ui/SberApiClientCard/SberApiClientCard";
-import { updateSberApiClientTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/updateSberApiClientTokensThunk";
+import { sberApiRefreshTokensThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/sberApiRefreshTokensThunk";
+
+// import { updateSberApiClientTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/updateSberApiClientTokensThunk";
 
 export interface SberApiClientsCardListProps {
     columnsCount: 1 | 2 | 3 | 4 | 6 | 8;
@@ -55,10 +57,15 @@ export const SberApiClientsCardList = memo(
             if (code && id) {
                 // alert(`Code: ${code}; ID: ${id}`);
                 dispatch(
-                    updateSberApiClientTokensThunk({
-                        entityId: id,
+                    sberApiRefreshTokensThunk({
+                        sberApiClientId: id,
+                        grantType: "authorization_code",
                         code: code,
                     }),
+                    // updateSberApiClientTokensThunk({
+                    //     entityId: id,
+                    //     code: code,
+                    // }),
                 ).then((result) => {
                     if (result.meta.requestStatus === "fulfilled") {
                         router.replace("/sber-api-clients");

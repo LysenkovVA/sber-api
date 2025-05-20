@@ -1,8 +1,8 @@
 "use client";
 
 import React, { memo } from "react";
-import { ClearOutlined } from "@ant-design/icons";
 import { Flex, Skeleton, Typography } from "antd";
+import { DisconnectOutlined } from "@ant-design/icons";
 
 export interface ClearTokensButtonProps {
     onClick?: () => void;
@@ -20,16 +20,16 @@ export const ClearTokensButton = memo((props: ClearTokensButtonProps) => {
             onClick={onClick}
         >
             {!isLoading ? (
-                <ClearOutlined style={{ color: "blue" }} />
+                <DisconnectOutlined style={{ color: "red" }} />
             ) : (
                 <Skeleton.Node active style={{ width: 40, height: 30 }} />
             )}
             {!isLoading ? (
                 <Typography.Text
-                    style={{ fontSize: 10, color: "blue" }}
+                    style={{ fontSize: 10, color: "red" }}
                     type={"secondary"}
                 >
-                    {`Очистить токены`}
+                    {`Отключиться`}
                 </Typography.Text>
             ) : null}
         </Flex>

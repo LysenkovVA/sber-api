@@ -15,6 +15,7 @@ export interface FormItemInputProps {
     isLoading: boolean;
     placeholder: string;
     noStyle?: boolean;
+    disabled?: boolean;
 }
 
 export const FormItemInput = memo((props: FormItemInputProps) => {
@@ -27,12 +28,14 @@ export const FormItemInput = memo((props: FormItemInputProps) => {
         isLoading = false,
         placeholder = "",
         noStyle = undefined,
+        disabled = false,
     } = props;
     return (
         <Form.Item
             noStyle={noStyle}
             label={
                 <LabelWithIcon
+                    // disabled={disabled}
                     imageSrc={imageSrc}
                     labelText={labelText}
                     iconSize={FORM_ICON_SIZE}
@@ -48,6 +51,7 @@ export const FormItemInput = memo((props: FormItemInputProps) => {
         >
             {!isLoading ? (
                 <Input
+                    disabled={disabled}
                     id={namePath[0] ?? "field"}
                     autoComplete={"off"}
                     placeholder={placeholder}

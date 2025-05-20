@@ -3,10 +3,11 @@ import { getSberApiClientsSimpleListThunk } from "../thunks/getSberApiClientsSim
 import { SimpleListReduxSchema } from "@/app/lib/types/SimpleListReduxSchema";
 import { SberApiClientEntity } from "../types/SberApiClientEntity";
 import { sberApiClientAdapter } from "../adapter/sberApiClientAdapter";
-import { updateSberApiClientTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/updateSberApiClientTokensThunk";
+// import { updateSberApiClientTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/updateSberApiClientTokensThunk";
 import { clearTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/clearTokensThunk";
-import { refreshSberApiClientTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/refreshSberApiClientTokensThunk";
-import { createRublePaymentThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/createRublePaymentThunk";
+import { sberApiRefreshTokensThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/sberApiRefreshTokensThunk";
+import { createRublePaymentThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/payments/createRublePaymentThunk";
+import { upsertSberApiClientThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/upsertSberApiClientThunk";
 
 const initialState: SimpleListReduxSchema<SberApiClientEntity> = {
     ids: [],
@@ -72,37 +73,15 @@ export const sberApiClientsSimpleListSlice = createSlice({
                     }
                 },
             )
-            .addCase(
-                updateSberApiClientTokensThunk.fulfilled,
-                (state, action) => {
-                    state.isLoading = false;
-                    state.error = undefined;
+            .addCase(upsertSberApiClientThunk.fulfilled, (state, action) => {
+                state.isLoading = false;
 
-                    sberApiClientAdapter.upsertOne(state, action.payload.data!);
-                },
-            )
-            .addCase(
-                updateSberApiClientTokensThunk.rejected,
-                (state, action) => {
-                    state.isLoading = false;
-                    state.error = action.payload;
-                },
-            )
-            .addCase(
-                refreshSberApiClientTokensThunk.fulfilled,
-                (state, action) => {
-                    state.error = undefined;
-
-                    sberApiClientAdapter.upsertOne(state, action.payload.data!);
-                },
-            )
-            .addCase(
-                refreshSberApiClientTokensThunk.rejected,
-                (state, action) => {
-                    state.isLoading = false;
-                    state.error = action.payload;
-                },
-            )
+                sberApiClientAdapter.upsertOne(state, action.payload.data!);
+            })
+            .addCase(sberApiRefreshTokensThunk.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
             .addCase(clearTokensThunk.fulfilled, (state, action) => {
                 state.isLoading = false;
                 Object.values(state.entities).map((client) => {
