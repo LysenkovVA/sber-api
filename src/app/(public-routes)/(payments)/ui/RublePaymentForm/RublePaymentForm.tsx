@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useEffect } from "react";
 import { Button, Divider, Flex, Form, FormInstance, Typography } from "antd";
-import { RublePaymentEntity } from "@/app/(public-routes)/(payments)/model/types/RublePaymentEntity";
+import { RublePaymentEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/RublePaymentEntity";
 import {
     DynamicModuleLoader,
     useAppDispatch,
@@ -23,7 +23,6 @@ import { CopyOutlined } from "@ant-design/icons";
 import { formItemLayout } from "@/app/UI/AppLayout/config/formItemLayout";
 import { createRublePaymentThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/payments/createRublePaymentThunk";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
-import { v4 as uuidv4 } from "uuid";
 
 export interface RublePaymentFormProps {
     form: FormInstance;
@@ -61,7 +60,7 @@ export const RublePaymentForm = memo((props: RublePaymentFormProps) => {
                 paymentData: {
                     ...formData!,
                     date: new Date(),
-                    externalId: uuidv4().toString(),
+                    // externalId: uuidv4().toString(),
                     payerKpp: "583501001",
                     payerBankCorrAccount: "30101810300000000601",
                 },

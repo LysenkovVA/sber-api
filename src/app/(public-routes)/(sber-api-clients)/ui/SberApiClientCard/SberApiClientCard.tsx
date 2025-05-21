@@ -17,7 +17,7 @@ import { ClearTokensButton } from "@/app/(public-routes)/(sber-api-clients)/ui/S
 import { clearTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/clearTokensThunk";
 import { DateTimeHelper } from "@/app/lib/utils/dateTimeHelper";
 import { CreateRublePaymentButton } from "@/app/(public-routes)/(payments)/ui/CreateRublePaymentButton";
-import { RublePaymentEntity } from "@/app/(public-routes)/(payments)/model/types/RublePaymentEntity";
+import { RublePaymentEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/RublePaymentEntity";
 import { v4 as uuidv4 } from "uuid";
 
 export interface SberApiClientCardProps {

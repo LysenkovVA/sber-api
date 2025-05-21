@@ -3,16 +3,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
 import { ThunkConfig } from "@/app/lib/store";
-import { SberUserInfo } from "@/app/(public-routes)/(SBER-API)/sber-api/user-info/actions/getUserInfo";
 import { getSberApiClientByIdThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/getSberApiClientByIdThunk";
 import { sberApiRefreshTokensThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/sberApiRefreshTokensThunk";
+import { SberUserInfoEntity } from "@/app/(public-routes)/(SBER-API)/model/types/user-info/SberUserInfoEntity";
 
 export interface GetUserInfoThunkProps {
     sberApiClientId: string; // Идентификатор клиента в БД
 }
 
 export const getUserInfoThunk = createAsyncThunk<
-    ResponseData<SberUserInfo | undefined>,
+    ResponseData<SberUserInfoEntity | undefined>,
     GetUserInfoThunkProps,
     ThunkConfig<string>
 >("getUserInfoThunk", async (props, thunkApi) => {
@@ -42,7 +42,7 @@ export const getUserInfoThunk = createAsyncThunk<
             );
 
             const userInfo = (await response.json()) as ResponseData<
-                SberUserInfo | undefined
+                SberUserInfoEntity | undefined
             >;
 
             // Если произошла ошибки

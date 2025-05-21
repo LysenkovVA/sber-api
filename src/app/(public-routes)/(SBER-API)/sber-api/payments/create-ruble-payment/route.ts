@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
 import { createRublePayment } from "@/app/(public-routes)/(SBER-API)/sber-api/payments/create-ruble-payment/actions/createRublePayment";
-import { RublePaymentEntity } from "@/app/(public-routes)/(payments)/model/types/RublePaymentEntity";
+import { RublePaymentEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/RublePaymentEntity";
 
 export async function POST(
     request: NextRequest,

@@ -3,65 +3,13 @@
 import { getSberAgent } from "@/app/lib/sber/sberAgent";
 import fetch from "node-fetch";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
-
-export interface SberUserInfo {
-    sub?: string;
-    orgKpp?: string;
-    iss?: string;
-    inn?: string;
-    orgJuridicalAddress?: string;
-    OrgName?: string;
-    orgFullName?: string;
-    buyOnCreditMmb?: boolean;
-    individualExecutiveAgency?: number;
-    terBank?: string;
-    userCryptoType?: string;
-    aud?: string;
-    summOfferSmartCredit?: number;
-    orgLawFormShort?: string;
-    orgOgrn?: string;
-    orgActualAddress?: string;
-    HashOrgId?: string;
-    offerSmartCredit?: boolean;
-    name?: string;
-    userPosition?: string;
-    hasActiveCreditLine?: boolean;
-    phone_number?: string;
-    orgLawForm?: string;
-    email?: string;
-}
-
-interface SBER_USER_INFO_BAD_REQUEST_RESPONSE {
-    error: string;
-    error_description: string;
-}
-
-interface SBER_USER_INFO_UNAUTHORIZED_RESPONSE {
-    error: string;
-    error_description: string;
-}
-
-interface SBER_USER_INFO_FORBIDDEN_RESPONSE {
-    errorCode: string;
-    errorMsg: string;
-}
-
-interface SBER_USER_INFO_NOT_ACCEPTABLE_RESPONSE {
-    error: string;
-    error_description: string;
-}
-
-interface SBER_USER_INFO_TOO_MANY_REQUESTS_RESPONSE {
-    cause: string;
-    referenceId: string;
-    message: string;
-}
-
-interface SBER_USER_INFO_INTERNAL_SERVER_ERROR_RESPONSE {
-    cause: string;
-    referenceId: string;
-    message: string;
-}
+import { SberUserInfoEntity } from "@/app/(public-routes)/(SBER-API)/model/types/user-info/SberUserInfoEntity";
+import { SberUserInfoBadRequestResponse } from "../../../model/types/user-info/responses/SberUserInfoBadRequestResponse";
+import { SberUserInfoUnauthorizedResponse } from "../../../model/types/user-info/responses/SberUserInfoUnauthorizedResponse";
+import { SberUserInfoNotAcceptableResponse } from "../../../model/types/user-info/responses/SberUserInfoNotAcceptableResponse";
+import { SberUserInfoForbiddenResponse } from "../../../model/types/user-info/responses/SberUserInfoForbiddenResponse";
+import { SberUserInfoTooManyRequestsResponse } from "../../../model/types/user-info/responses/SberUserInfoTooManyRequestsResponse";
+import { SberUserInfoInternalServerErrorResponse } from "../../../model/types/user-info/responses/SberUserInfoInternalServerErrorResponse";
 
 export async function getUserInfo(accessToken: string) {
     // Получение информации о клиенте
@@ -82,42 +30,42 @@ export async function getUserInfo(accessToken: string) {
             switch (response.status) {
                 case 400:
                     responseData =
-                        (await response.json()) as SBER_USER_INFO_BAD_REQUEST_RESPONSE;
+                        (await response.json()) as SberUserInfoBadRequestResponse;
                     return ResponseData.BadRequest([
                         `${response.status}: ${responseData.error}. ${responseData.error_description}`,
                     ]);
 
                 case 401:
                     responseData =
-                        (await response.json()) as SBER_USER_INFO_UNAUTHORIZED_RESPONSE;
+                        (await response.json()) as SberUserInfoUnauthorizedResponse;
                     return ResponseData.NotAuthorized([
                         `${response.status}: ${responseData.error}. ${responseData.error_description}`,
                     ]);
 
                 case 403:
                     responseData =
-                        (await response.json()) as SBER_USER_INFO_FORBIDDEN_RESPONSE;
+                        (await response.json()) as SberUserInfoForbiddenResponse;
                     return ResponseData.Forbidden([
                         `${response.status}: ${responseData.errorCode}. ${responseData.errorMsg}`,
                     ]);
 
                 case 406:
                     responseData =
-                        (await response.json()) as SBER_USER_INFO_NOT_ACCEPTABLE_RESPONSE;
+                        (await response.json()) as SberUserInfoNotAcceptableResponse;
                     return ResponseData.NotAcceptable([
                         `${response.status}: ${responseData.error}. ${responseData.error_description}`,
                     ]);
 
                 case 429:
                     responseData =
-                        (await response.json()) as SBER_USER_INFO_TOO_MANY_REQUESTS_RESPONSE;
+                        (await response.json()) as SberUserInfoTooManyRequestsResponse;
                     return ResponseData.TooManyRequests([
                         `${response.status}: ${responseData.cause}. ${responseData.message}. ReferenceId: ${responseData.referenceId}`,
                     ]);
 
                 case 500:
                     responseData =
-                        (await response.json()) as SBER_USER_INFO_INTERNAL_SERVER_ERROR_RESPONSE;
+                        (await response.json()) as SberUserInfoInternalServerErrorResponse;
                     return ResponseData.Error([
                         `${response.status}: ${responseData.cause}. ${responseData.message}. ReferenceId: ${responseData.referenceId}`,
                     ]);
@@ -148,8 +96,8 @@ export async function getUserInfo(accessToken: string) {
             );
             const sign = Buffer.from(parts[2], "base64url").toString("utf-8");
 
-            return ResponseData.Ok<SberUserInfo>(
-                JSON.parse(payload) as SberUserInfo,
+            return ResponseData.Ok<SberUserInfoEntity>(
+                JSON.parse(payload) as SberUserInfoEntity,
             );
         }
     } catch (error) {

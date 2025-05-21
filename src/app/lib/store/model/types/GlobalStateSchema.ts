@@ -3,7 +3,7 @@ import { InfiniteScrollSchema } from "@/app/UI/InfiniteScroll/model/types/Infini
 import { SimpleListReduxSchema } from "@/app/lib/types/SimpleListReduxSchema";
 import { SberApiClientEntity } from "@/app/(public-routes)/(sber-api-clients)/model/types/SberApiClientEntity";
 import { DetailsReduxSchema } from "@/app/lib/types/MultipleDetailsReduxSchema";
-import { RublePaymentEntity } from "@/app/(public-routes)/(payments)/model/types/RublePaymentEntity";
+import { RublePaymentEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/RublePaymentEntity";
 
 /**
  * Схема глобального состояния

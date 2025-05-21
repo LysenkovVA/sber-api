@@ -3,25 +3,12 @@
 import {
     RublePaymentEntity,
     RublePaymentEntitySchema,
-} from "@/app/(public-routes)/(payments)/model/types/RublePaymentEntity";
+} from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/RublePaymentEntity";
 import { validateObject } from "@/app/lib/validation/validateObject";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
 import fetch from "node-fetch";
 import { getSberAgent } from "@/app/lib/sber/sberAgent";
-
-interface ERROR_RUBLE_PAYMENT_RESPONSE {
-    checks?: [
-        {
-            level?: string;
-            message?: string;
-            fields?: string[];
-        },
-    ];
-    cause?: string;
-    message?: string;
-    referenceId?: string;
-    internalErrorCode?: string;
-}
+import { RublePaymentErrorResponse } from "../../../../model/types/ruble-payments/responses/RublePaymentErrorResponse";
 
 export async function createRublePayment(
     accessToken: string,
@@ -48,11 +35,11 @@ export async function createRublePayment(
         });
 
         if (!response.ok) {
-            let responseData: ERROR_RUBLE_PAYMENT_RESPONSE = {};
+            let responseData: RublePaymentErrorResponse = {};
             switch (response.status) {
                 case 400:
                     responseData =
-                        (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                        (await response.json()) as RublePaymentErrorResponse;
                     console.error(
                         `Create payment error ${response.status}: `,
                         JSON.stringify(responseData, null, 2),
@@ -63,7 +50,7 @@ export async function createRublePayment(
 
                 case 401:
                     responseData =
-                        (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                        (await response.json()) as RublePaymentErrorResponse;
                     console.error(
                         `Create payment error ${response.status}: `,
                         JSON.stringify(responseData, null, 2),
@@ -74,7 +61,7 @@ export async function createRublePayment(
 
                 case 403:
                     responseData =
-                        (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                        (await response.json()) as RublePaymentErrorResponse;
                     console.error(
                         `Create payment error ${response.status}: `,
                         JSON.stringify(responseData, null, 2),
@@ -85,7 +72,7 @@ export async function createRublePayment(
 
                 case 404:
                     responseData =
-                        (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                        (await response.json()) as RublePaymentErrorResponse;
                     console.error(
                         `Create payment error ${response.status}: `,
                         JSON.stringify(responseData, null, 2),
@@ -96,7 +83,7 @@ export async function createRublePayment(
 
                 case 429:
                     responseData =
-                        (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                        (await response.json()) as RublePaymentErrorResponse;
                     console.error(
                         `Create payment error ${response.status}: `,
                         JSON.stringify(responseData, null, 2),
@@ -107,7 +94,7 @@ export async function createRublePayment(
 
                 case 500:
                     responseData =
-                        (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                        (await response.json()) as RublePaymentErrorResponse;
                     console.error(
                         `Create payment error ${response.status}: `,
                         JSON.stringify(responseData, null, 2),
@@ -118,7 +105,7 @@ export async function createRublePayment(
 
                 case 503:
                     responseData =
-                        (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                        (await response.json()) as RublePaymentErrorResponse;
                     console.error(
                         `Create payment error ${response.status}: `,
                         JSON.stringify(responseData, null, 2),
@@ -135,7 +122,7 @@ export async function createRublePayment(
         } else {
             if (response.status === 202) {
                 const responseData =
-                    (await response.json()) as ERROR_RUBLE_PAYMENT_RESPONSE;
+                    (await response.json()) as RublePaymentErrorResponse;
                 console.error(
                     `Create payment error ${response.status}: `,
                     JSON.stringify(responseData, null, 2),

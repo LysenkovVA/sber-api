@@ -5,14 +5,15 @@ import { ResponseData } from "@/app/lib/responses/ResponseData";
 import { ThunkConfig } from "@/app/lib/store";
 import { getSberApiClientByIdThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/getSberApiClientByIdThunk";
 import { sberApiRefreshTokensThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/sberApiRefreshTokensThunk";
-import { SberClientInfo } from "@/app/(public-routes)/(SBER-API)/sber-api/client-info/actions/getClientInfo";
+
+import { SberClientInfoEntity } from "@/app/(public-routes)/(SBER-API)/model/types/client-info/SberClientInfoEntity";
 
 export interface GetClientInfoThunkProps {
     sberApiClientId: string; // Идентификатор клиента в БД
 }
 
 export const getClientInfoThunk = createAsyncThunk<
-    ResponseData<SberClientInfo | undefined>,
+    ResponseData<SberClientInfoEntity | undefined>,
     GetClientInfoThunkProps,
     ThunkConfig<string>
 >("getClientInfoThunk", async (props, thunkApi) => {
@@ -42,7 +43,7 @@ export const getClientInfoThunk = createAsyncThunk<
             );
 
             const clientInfo = (await response.json()) as ResponseData<
-                SberClientInfo | undefined
+                SberClientInfoEntity | undefined
             >;
 
             // Если произошла ошибки

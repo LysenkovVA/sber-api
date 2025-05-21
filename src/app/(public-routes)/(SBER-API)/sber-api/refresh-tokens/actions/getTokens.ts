@@ -3,65 +3,12 @@
 import fetch from "node-fetch";
 import { getSberAgent } from "@/app/lib/sber/sberAgent";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
-
-/**
- * Ответ сервера (200) при получении токенов
- */
-export interface SBER_TOKENS_RESPONSE {
-    access_token: string; // Авторизационный токен доступа
-    token_type: string; // Всегда возвращается Bearer
-    expires_in: number; // Срок жизни токена в секундах. Срок жизни access_token составляет 60 минут.
-    refresh_token: string; // Токен обновления. Токен обновления. Срок жизни refresh_token составляет 180 дней.
-    scope: string; // Набор атрибутов (claim) и операций, которые будут доступны Платформе после авторизации клиента.
-    id_token: string; // Закодированный в Base64URL набор атрибутов клиента, необходимых для идентификации пользователя. Атрибуты разделены символами «.», каждый необходимо декодировать отдельно
-}
-
-/**
- * Ответ сервера (400) при получении токенов
- */
-interface SBER_TOKENS_BAD_REQUEST_RESPONSE {
-    error: string;
-    error_description: string;
-}
-
-/**
- * Ответ сервера (403) при получении токенов
- */
-interface SBER_TOKENS_FORBIDDEN_RESPONSE {
-    errorCode: string;
-    errorMsg: string;
-}
-
-/**
- * Ответ сервера (406) при получении токенов
- */
-interface SBER_TOKENS_NOT_ACCEPTABLE_RESPONSE {
-    error: string;
-    error_description: string;
-}
-
-/**
- * Ответ сервера (429) при получении токенов
- */
-interface SBER_TOKENS_TOO_MANY_REQUESTS_RESPONSE {
-    cause: string;
-    referenceId: string;
-    message: string;
-}
-
-/**
- * Ответ сервера (500) при получении токенов
- */
-interface SBER_TOKENS_INTERNAL_SERVER_ERROR_RESPONSE {
-    cause: string;
-    referenceId: string;
-    message: string;
-}
-
-// export enum SberTokenGrantType {
-//     authorizationCode = "authorization_code",
-//     refreshToken = "refresh_token",
-// }
+import { SberTokensEntity } from "../../../model/types/tokens/SberTokensEntity";
+import { SberTokensBadRequestResponse } from "../../../model/types/tokens/responses/SberTokensBadRequestResponse";
+import { SberTokensForbiddenResponse } from "../../../model/types/tokens/responses/SberTokensForbiddenResponse";
+import { SberTokensInternalServerErrorResponse } from "../../../model/types/tokens/responses/SberTokensInternalServerErrorResponse";
+import { SberTokensNotAcceptableResponse } from "../../../model/types/tokens/responses/SberTokensNotAcceptableResponse";
+import { SberTokensTooManyRequestsResponse } from "../../../model/types/tokens/responses/SberTokensTooManyRequestsResponse";
 
 /**
  * Функция получения токенов доступа по коду авторизации либо refresh-токену
@@ -84,7 +31,7 @@ export async function getTokens(
     code?: string,
     refreshToken?: string,
     codeVerifier?: string,
-): Promise<ResponseData<SBER_TOKENS_RESPONSE | undefined>> {
+): Promise<ResponseData<SberTokensEntity | undefined>> {
     try {
         /**
          * Формируем запрос, согласно документации
@@ -125,7 +72,7 @@ export async function getTokens(
             switch (response.status) {
                 case 400:
                     responseData =
-                        (await response.json()) as SBER_TOKENS_BAD_REQUEST_RESPONSE;
+                        (await response.json()) as SberTokensBadRequestResponse;
                     return ResponseData.BadRequest([
                         `Ошибка: ${responseData.error}`,
                         `Описание: ${responseData.error_description}`,
@@ -133,7 +80,7 @@ export async function getTokens(
 
                 case 403:
                     responseData =
-                        (await response.json()) as SBER_TOKENS_FORBIDDEN_RESPONSE;
+                        (await response.json()) as SberTokensForbiddenResponse;
                     return ResponseData.Forbidden([
                         `Код: ${responseData.errorCode}`,
                         `Описание: ${responseData.errorMsg}`,
@@ -141,7 +88,7 @@ export async function getTokens(
 
                 case 406:
                     responseData =
-                        (await response.json()) as SBER_TOKENS_NOT_ACCEPTABLE_RESPONSE;
+                        (await response.json()) as SberTokensNotAcceptableResponse;
                     return ResponseData.NotAcceptable([
                         `Ошибка: ${responseData.error}`,
                         `Описание: ${responseData.error_description}`,
@@ -149,7 +96,7 @@ export async function getTokens(
 
                 case 429:
                     responseData =
-                        (await response.json()) as SBER_TOKENS_TOO_MANY_REQUESTS_RESPONSE;
+                        (await response.json()) as SberTokensTooManyRequestsResponse;
                     return ResponseData.NotAcceptable([
                         `Причина: ${responseData.cause}`,
                         `Reference id: ${responseData.referenceId}`,
@@ -158,7 +105,7 @@ export async function getTokens(
 
                 case 500:
                     responseData =
-                        (await response.json()) as SBER_TOKENS_INTERNAL_SERVER_ERROR_RESPONSE;
+                        (await response.json()) as SberTokensInternalServerErrorResponse;
                     return ResponseData.Error([
                         `Причина: ${responseData.cause}`,
                         `Reference id: ${responseData.referenceId}`,
@@ -172,8 +119,8 @@ export async function getTokens(
             }
         }
 
-        const data: SBER_TOKENS_RESPONSE =
-            (await response.json()) as SBER_TOKENS_RESPONSE;
+        const data: SberTokensEntity =
+            (await response.json()) as SberTokensEntity;
 
         return ResponseData.Ok(data);
     } catch (error) {

@@ -4,10 +4,10 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
 import { ThunkConfig } from "@/app/lib/store";
 import { getSberApiClientByIdThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/getSberApiClientByIdThunk";
-import { SBER_TOKENS_RESPONSE } from "@/app/(public-routes)/(SBER-API)/sber-api/refresh-tokens/actions/getTokens";
 import { DateTimeHelper } from "@/app/lib/utils/dateTimeHelper";
 import dayjs from "dayjs";
 import { upsertSberApiClientThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/upsertSberApiClientThunk";
+import { SberTokensEntity } from "@/app/(public-routes)/(SBER-API)/model/types/tokens/SberTokensEntity";
 
 export interface SberApiRefreshTokensThunkProps {
     sberApiClientId: string; // Идентификатор клиента в БД
@@ -16,7 +16,7 @@ export interface SberApiRefreshTokensThunkProps {
 }
 
 export const sberApiRefreshTokensThunk = createAsyncThunk<
-    ResponseData<SBER_TOKENS_RESPONSE | undefined>,
+    ResponseData<SberTokensEntity | undefined>,
     SberApiRefreshTokensThunkProps,
     ThunkConfig<string>
 >("sberApiRefreshTokensThunk", async (props, thunkApi) => {
@@ -47,7 +47,7 @@ export const sberApiRefreshTokensThunk = createAsyncThunk<
         );
 
         const newTokens = (await response.json()) as ResponseData<
-            SBER_TOKENS_RESPONSE | undefined
+            SberTokensEntity | undefined
         >;
 
         if (!newTokens.isOk) {
@@ -70,7 +70,7 @@ export const sberApiRefreshTokensThunk = createAsyncThunk<
             newClientData.expiresIn = newTokens.data?.expires_in;
             newClientData.idToken = newTokens.data?.id_token;
 
-            dispatch(
+            await dispatch(
                 upsertSberApiClientThunk({
                     entityId: client.data?.id,
                     // @ts-ignore // TODO fix!
