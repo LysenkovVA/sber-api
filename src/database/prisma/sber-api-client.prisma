@@ -11,6 +11,8 @@ model SberApiClient {
   refreshTokenExpireDate DateTime?
   idToken                String?
 
+  rublePayments RublePayment[]
+
   // Служебные поля
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -28,7 +28,7 @@ export const sberApiRefreshTokensThunk = createAsyncThunk<
         ).unwrap();
 
         if (!client.isOk) {
-            return rejectWithValue(client.getAllErrors());
+            return rejectWithValue(ResponseData.getAllErrors(client));
         }
 
         const response = await fetch(
@@ -51,10 +51,8 @@ export const sberApiRefreshTokensThunk = createAsyncThunk<
         >;
 
         if (!newTokens.isOk) {
-            console.log("sberApiRefreshTokensThunk newTokens not OK");
-            return rejectWithValue(newTokens.getAllErrors());
+            return rejectWithValue(ResponseData.getAllErrors(newTokens));
         } else {
-            console.log("sberApiRefreshTokensThunk newTokens OK");
             // Обновляем токены для клиента
             const newClientData = { ...client.data };
             newClientData.accessToken = newTokens.data?.access_token;

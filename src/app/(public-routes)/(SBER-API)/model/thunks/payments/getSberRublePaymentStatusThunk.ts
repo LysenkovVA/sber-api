@@ -3,20 +3,20 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
 import { ThunkConfig } from "@/app/lib/store";
-import { RublePaymentEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/RublePaymentEntity";
 import { getSberApiClientByIdThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/getSberApiClientByIdThunk";
 import { sberApiRefreshTokensThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/sberApiRefreshTokensThunk";
+import { SberRublePaymentStatusEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/SberRublePaymentStatusEntity";
 
-export interface CreateRublePaymentThunkProps {
+export interface GetSberRublePaymentStatusThunkProps {
     sberApiClientId: string; // Идентификатор клиента в БД
-    paymentData: RublePaymentEntity;
+    externalId: string;
 }
 
-export const createRublePaymentThunk = createAsyncThunk<
-    ResponseData<RublePaymentEntity | undefined>,
-    CreateRublePaymentThunkProps,
+export const getSberRublePaymentStatusThunk = createAsyncThunk<
+    ResponseData<SberRublePaymentStatusEntity | undefined>,
+    GetSberRublePaymentStatusThunkProps,
     ThunkConfig<string>
->("createRublePaymentThunk", async (props, thunkApi) => {
+>("getSberRublePaymentStatus", async (props, thunkApi) => {
     const { rejectWithValue, dispatch } = thunkApi;
 
     try {
@@ -29,30 +29,30 @@ export const createRublePaymentThunk = createAsyncThunk<
             ).unwrap();
 
             if (!client.isOk) {
-                return rejectWithValue(client.getAllErrors());
+                return rejectWithValue(ResponseData.getAllErrors(client));
             }
 
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_SBER_API_PATH}/payments/create-ruble-payment`,
+                `${process.env.NEXT_PUBLIC_SBER_API_PATH}/payments/ruble-payment-state`,
                 {
                     method: "POST",
                     body: JSON.stringify({
                         accessToken: client.data?.accessToken,
-                        paymentData: props.paymentData,
+                        externalId: props.externalId,
                     }),
                 },
             );
 
-            const rpp = (await response.json()) as ResponseData<
-                RublePaymentEntity | undefined
+            const status = (await response.json()) as ResponseData<
+                SberRublePaymentStatusEntity | undefined
             >;
 
             // Если произошла ошибки
-            if (!rpp.isOk) {
+            if (!status.isOk) {
                 // Если статус ошибки отличен от 401
-                if (rpp.status !== 401) {
+                if (status.status !== 401) {
                     // Бросаем ошибку дальше
-                    return rejectWithValue(ResponseData.getAllErrors(rpp));
+                    return rejectWithValue(ResponseData.getAllErrors(status));
                 }
                 // Если статус ошибки - неверный токен доступа
                 else {
@@ -70,10 +70,10 @@ export const createRublePaymentThunk = createAsyncThunk<
                 }
             }
 
-            return rpp;
+            return status;
         } while (CURRENT_ATTEMPT < MAX_ATTEMPTS);
 
-        return rejectWithValue("Не удалось направить РПП в банк-клиент");
+        return rejectWithValue("Не удалось получить статус РПП");
     } catch (error) {
         // Неизвестная ошибка в thunk-е
         return rejectWithValue(ResponseData.Error(error).getAllErrors());

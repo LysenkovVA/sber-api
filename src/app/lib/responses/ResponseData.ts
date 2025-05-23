@@ -147,7 +147,7 @@ export class ResponseData<T> {
         // Ошибки Zod
         if (errorInstance instanceof ZodError) {
             const errorMessages = errorInstance.errors.map((err) => {
-                return err.message;
+                return `${err.message} (${err.path})`;
             });
 
             return new ResponseData<undefined>(

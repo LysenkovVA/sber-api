@@ -1,9 +1,9 @@
 "use server";
 
 import {
-    RublePaymentEntity,
-    RublePaymentEntitySchema,
-} from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/RublePaymentEntity";
+    SberRublePaymentEntity,
+    SberRublePaymentEntitySchema,
+} from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/SberRublePaymentEntity";
 import { validateObject } from "@/app/lib/validation/validateObject";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
 import fetch from "node-fetch";
@@ -12,12 +12,12 @@ import { RublePaymentErrorResponse } from "../../../../model/types/ruble-payment
 
 export async function createRublePayment(
     accessToken: string,
-    paymentData: RublePaymentEntity,
+    paymentData: SberRublePaymentEntity,
 ) {
     try {
         // Валидация
         const validatedData = await validateObject(
-            RublePaymentEntitySchema,
+            SberRublePaymentEntitySchema,
             paymentData,
         );
 
@@ -131,8 +131,8 @@ export async function createRublePayment(
                     `${responseData.cause}. ${responseData.message}. Код: ${responseData.internalErrorCode}`,
                 ]);
             } else {
-                const data: RublePaymentEntity =
-                    (await response.json()) as RublePaymentEntity;
+                const data: SberRublePaymentEntity =
+                    (await response.json()) as SberRublePaymentEntity;
 
                 return ResponseData.Ok_201(data);
             }

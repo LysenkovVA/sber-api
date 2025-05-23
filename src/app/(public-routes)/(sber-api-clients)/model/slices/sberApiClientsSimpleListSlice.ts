@@ -6,7 +6,7 @@ import { sberApiClientAdapter } from "../adapter/sberApiClientAdapter";
 // import { updateSberApiClientTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/updateSberApiClientTokensThunk";
 import { clearTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/clearTokensThunk";
 import { sberApiRefreshTokensThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/sberApiRefreshTokensThunk";
-import { createRublePaymentThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/payments/createRublePaymentThunk";
+import { createSberRublePaymentThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/payments/createSberRublePaymentThunk";
 import { upsertSberApiClientThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/upsertSberApiClientThunk";
 
 const initialState: SimpleListReduxSchema<SberApiClientEntity> = {
@@ -97,7 +97,7 @@ export const sberApiClientsSimpleListSlice = createSlice({
                 state.isLoading = false;
                 state.error = action.payload;
             })
-            .addCase(createRublePaymentThunk.rejected, (state, action) => {
+            .addCase(createSberRublePaymentThunk.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
             });

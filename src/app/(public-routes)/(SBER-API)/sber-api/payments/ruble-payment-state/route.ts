@@ -2,14 +2,16 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
-import { createRublePayment } from "@/app/(public-routes)/(SBER-API)/sber-api/payments/create-ruble-payment/actions/createRublePayment";
-import { SberRublePaymentEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/SberRublePaymentEntity";
+import { getRublePaymentState } from "@/app/(public-routes)/(SBER-API)/sber-api/payments/ruble-payment-state/actions/getRublePaymentState";
+import { SberRublePaymentStatusEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/SberRublePaymentStatusEntity";
 
 export async function POST(
     request: NextRequest,
-): Promise<NextResponse<ResponseData<SberRublePaymentEntity | undefined>>> {
+): Promise<
+    NextResponse<ResponseData<SberRublePaymentStatusEntity | undefined>>
+> {
     // BODY
-    const { accessToken, paymentData } = await request.json();
+    const { accessToken, externalId } = await request.json();
 
     try {
         // Проверка, что все параметры заданы
@@ -19,14 +21,14 @@ export async function POST(
             ]).toNextResponse();
         }
 
-        if (!paymentData) {
+        if (!externalId) {
             return ResponseData.BadRequest([
-                "Параметр paymentData не задан",
+                "Параметр externalId не задан",
             ]).toNextResponse();
         }
 
         return (
-            await createRublePayment(accessToken, paymentData)
+            await getRublePaymentState(accessToken, externalId)
         ).toNextResponse();
     } catch (error) {
         return ResponseData.Error(error).toNextResponse();

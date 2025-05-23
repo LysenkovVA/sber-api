@@ -11,8 +11,6 @@ export interface ListReduxSchema<EntityType, FilterType extends string>
     filters?: OptionalRecord<FilterType, string[] | undefined>;
     totalCount: number;
     hasMore: boolean;
-    // Флаг для того, что данные необходимо полностью обновить
-    refreshDataNeeded: boolean;
     // Initialization
     _isInitialized: boolean;
 }

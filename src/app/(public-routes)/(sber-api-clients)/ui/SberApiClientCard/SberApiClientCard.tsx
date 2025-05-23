@@ -17,8 +17,6 @@ import { ClearTokensButton } from "@/app/(public-routes)/(sber-api-clients)/ui/S
 import { clearTokensThunk } from "@/app/(public-routes)/(sber-api-clients)/model/thunks/clearTokensThunk";
 import { DateTimeHelper } from "@/app/lib/utils/dateTimeHelper";
 import { CreateRublePaymentButton } from "@/app/(public-routes)/(payments)/ui/CreateRublePaymentButton";
-import { RublePaymentEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/RublePaymentEntity";
-import { v4 as uuidv4 } from "uuid";
 
 export interface SberApiClientCardProps {
     style?: CSSProperties;
@@ -26,36 +24,36 @@ export interface SberApiClientCardProps {
     isLoading?: boolean;
 }
 
-// TODO delete this!
-const testData: RublePaymentEntity = {
-    id: "",
-    date: dayjs("2025-05-15").toDate(),
-    externalId: uuidv4().toString(),
-    amount: 15.05,
-    operationCode: "01",
-    priority: "5",
-    voCode: "61150",
-    purpose: "Тестовое РПП. НДС нет.",
-    // Плательщик
-    payerName: "ТЕСТ СБЕР API для СПИФА",
-    payerInn: "5143942707",
-    payerAccount: "40702810606710000072",
-    payerBankBic: "048073601",
-    payerKpp: "583501001",
-    payerBankCorrAccount: "30101810300000000601",
-    // Кому
-    payeeName: "ПАО МТС",
-    payeeInn: "7740000076",
-    payeeKpp: "770901001",
-    payeeAccount: "40702810000000000652",
-    payeeBankBic: "044525232",
-    payeeBankCorrAccount: "30101810600000000232",
-    vat: {
-        type: "NO_VAT",
-        rate: "10",
-        amount: 15.05,
-    },
-};
+// // TODO delete this!
+// const testData: SberRublePaymentEntity = {
+//     id: "",
+//     date: dayjs("2025-05-15").toDate(),
+//     externalId: uuidv4().toString(),
+//     amount: 15.05,
+//     operationCode: "01",
+//     priority: "5",
+//     voCode: "61150",
+//     purpose: "Тестовое РПП. НДС нет.",
+//     // Плательщик
+//     payerName: "ТЕСТ СБЕР API для СПИФА",
+//     payerInn: "5143942707",
+//     payerAccount: "40702810606710000072",
+//     payerBankBic: "048073601",
+//     payerKpp: "583501001",
+//     payerBankCorrAccount: "30101810300000000601",
+//     // Кому
+//     payeeName: "ПАО МТС",
+//     payeeInn: "7740000076",
+//     payeeKpp: "770901001",
+//     payeeAccount: "40702810000000000652",
+//     payeeBankBic: "044525232",
+//     payeeBankCorrAccount: "30101810600000000232",
+//     vat: {
+//         type: "NO_VAT",
+//         rate: "10",
+//         amount: 15.05,
+//     },
+// };
 
 export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
     const { style, sberApiClient, isLoading } = props;
@@ -306,7 +304,7 @@ export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
                                           ).format("DD.MM.YYYY HH:mm:ss")}`
                                         : `Истек ${dayjs(
                                               sberApiClient?.accessTokenExpireDate,
-                                          ).format()}`}
+                                          ).format("DD.MM.YYYY HH:mm:ss")}`}
                                 </Tag>
                             ) : null}
                         </Flex>
@@ -368,7 +366,7 @@ export const SberApiClientCard = memo((props: SberApiClientCardProps) => {
                                           ).format("DD.MM.YYYY HH:mm:ss")}`
                                         : `Истек ${dayjs(
                                               sberApiClient?.refreshTokenExpireDate,
-                                          ).format()}`}
+                                          ).format("DD.MM.YYYY HH:mm:ss")}`}
                                 </Tag>
                             ) : null}
                         </Flex>

@@ -1,10 +1,10 @@
 import { Metadata } from "next";
-import { ON_SURFACE_COLOR } from "@/app/lib/themes/primary-theme";
+import { RublePaymentsCardList } from "@/app/(public-routes)/(payments)/ui/RublePaymentsCardList/RublePaymentsCardList";
 
 export const metadata: Metadata = {
     title: "SBER API | Платежи",
 };
 
 export default async function SberApiPaymentsPage() {
-    return <div style={{ color: ON_SURFACE_COLOR }}>{"Платежи"}</div>;
+    return <RublePaymentsCardList columnsCount={1} />;
 }

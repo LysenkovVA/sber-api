@@ -2,28 +2,32 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ResponseData } from "@/app/lib/responses/ResponseData";
-import { SberApiClientEntity } from "../types/SberApiClientEntity";
+import { RublePaymentEntity } from "../types/RublePaymentEntity";
 import { ThunkConfig } from "@/app/lib/store";
 
-export interface clearTokensThunkProps {
-    id: string;
+export interface UpdateRublePaymentStatusThunkProps {
+    paymentId: string;
+    newStatus: string;
 }
 
-export const clearTokensThunk = createAsyncThunk<
-    ResponseData<SberApiClientEntity | undefined>,
-    clearTokensThunkProps,
+export const updateRublePaymentStatusThunk = createAsyncThunk<
+    ResponseData<RublePaymentEntity | undefined>,
+    UpdateRublePaymentStatusThunkProps,
     ThunkConfig<string>
->("clearTokensThunk", async (props, thunkApi) => {
+>("updateRublePaymentStatusThunk", async (props, thunkApi) => {
     const { rejectWithValue } = thunkApi;
 
     try {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_PATH}/sber-api-clients/${props.id}/clear-tokens`,
-            { method: "POST" },
+            `${process.env.NEXT_PUBLIC_API_PATH}/payments/${props.paymentId}/update-status`,
+            {
+                method: "POST",
+                body: JSON.stringify({ newStatus: props.newStatus }),
+            },
         );
 
         const data = (await response.json()) as ResponseData<
-            SberApiClientEntity | undefined
+            RublePaymentEntity | undefined
         >;
 
         if (!data.isOk) {

@@ -1,5 +1,8 @@
-model Payment {
+model RublePayment {
   id String @id @default(cuid())
+
+  sberApiClient   SberApiClient? @relation(fields: [sberApiClientId], references: [id])
+  sberApiClientId String?
 
   number                          String?
   date                            DateTime
@@ -9,7 +12,7 @@ model Payment {
   externalId                      String?
   amount                          Int      @default(0)
   operationCode                   String
-  deliveryKind                    String
+  deliveryKind                    String?
   priority                        String
   urgencyCode                     String?
   voCode                          String?
@@ -47,5 +50,5 @@ model Payment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("payments")
+  @@map("ruble-payments")
 }

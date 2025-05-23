@@ -2,9 +2,10 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DetailsReduxSchema } from "@/app/lib/types/MultipleDetailsReduxSchema";
-import { RublePaymentEntity } from "@/app/(public-routes)/(SBER-API)/model/types/ruble-payments/RublePaymentEntity";
 import { v4 as uuid } from "uuid";
 import { getClientInfoThunk } from "@/app/(public-routes)/(SBER-API)/model/thunks/getClientInfoThunk";
+import { RublePaymentEntity } from "@/app/(public-routes)/(payments)/model/types/RublePaymentEntity";
+import { upsertRublePaymentThunk } from "@/app/(public-routes)/(payments)/model/thunks/upsertRublePaymentThunk";
 
 const initialState: DetailsReduxSchema<RublePaymentEntity> = {
     entityData: {
@@ -28,7 +29,9 @@ const initialState: DetailsReduxSchema<RublePaymentEntity> = {
         payeeAccount: "",
         payeeBankBic: "",
         payeeBankCorrAccount: "",
-        vat: null,
+        vatType: "NO_VAT",
+        vatRate: null,
+        vatAmount: 0,
     },
     entityFormData: {
         id: "",
@@ -51,7 +54,9 @@ const initialState: DetailsReduxSchema<RublePaymentEntity> = {
         payeeAccount: "",
         payeeBankBic: "",
         payeeBankCorrAccount: "",
-        vat: null,
+        vatType: "NO_VAT",
+        vatRate: null,
+        vatAmount: 0,
     },
     error: "",
     isFetching: false,
@@ -79,29 +84,38 @@ export const rublePaymentDetailsSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(getClientInfoThunk.fulfilled, (state, action) => {
-            state.isFetching = false;
-            state.isSaving = false;
-            state.error = undefined;
-            // alert(JSON.stringify(action.payload.data, null, 2));
-            state.entityData = {
-                ...state.entityData!,
-                payerName: action.payload.data?.fullName ?? "",
-                payerInn: action.payload.data?.inn ?? "",
-                payerKpp: action.payload.data?.kpps?.[0] ?? "",
-                payerAccount: action.payload.data?.accounts?.[0]?.number ?? "",
-                payerBankBic: action.payload.data?.accounts?.[0]?.bic ?? "",
-            };
-            state.entityFormData = {
-                ...state.entityFormData!,
-                payerName: action.payload.data?.fullName ?? "",
-                payerInn: action.payload.data?.inn ?? "",
-                payerKpp: action.payload.data?.kpps?.[0] ?? "",
-                payerAccount: action.payload.data?.accounts?.[0]?.number ?? "",
-                payerBankBic: action.payload.data?.accounts?.[0]?.bic ?? "",
-            };
-            state._isInitialized = true;
-        });
+        builder
+            .addCase(getClientInfoThunk.fulfilled, (state, action) => {
+                state.isFetching = false;
+                state.isSaving = false;
+                state.error = undefined;
+                // alert(JSON.stringify(action.payload.data, null, 2));
+                state.entityData = {
+                    ...state.entityData!,
+                    payerName: action.payload.data?.fullName ?? "",
+                    payerInn: action.payload.data?.inn ?? "",
+                    payerKpp: action.payload.data?.kpps?.[0] ?? "",
+                    payerAccount:
+                        action.payload.data?.accounts?.[0]?.number ?? "",
+                    payerBankBic: action.payload.data?.accounts?.[0]?.bic ?? "",
+                };
+                state.entityFormData = {
+                    ...state.entityFormData!,
+                    payerName: action.payload.data?.fullName ?? "",
+                    payerInn: action.payload.data?.inn ?? "",
+                    payerKpp: action.payload.data?.kpps?.[0] ?? "",
+                    payerAccount:
+                        action.payload.data?.accounts?.[0]?.number ?? "",
+                    payerBankBic: action.payload.data?.accounts?.[0]?.bic ?? "",
+                };
+                state._isInitialized = true;
+            })
+            .addCase(upsertRublePaymentThunk.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(getClientInfoThunk.rejected, (state, action) => {
+                state.error = action.payload;
+            });
     },
 });
 
